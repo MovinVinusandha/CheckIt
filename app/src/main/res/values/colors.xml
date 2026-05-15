@@ -5,4 +5,7 @@
     <color name="purple_gradient_start">#4E2A84</color>
     <color name="purple_gradient_end">#2E1A47</color>
     <color name="version_text_color">#80FFFFFF</color>
+    <color name="branding_purple">#6750A4</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="hint_color">#9E9E9E</color>
 </resources>
