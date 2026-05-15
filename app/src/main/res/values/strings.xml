@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CheckIt</string>
+    <string name="version_text">VERSION 1.0.0 - BETA</string>
+    <string name="content_desc_logo">Checkmark Logo</string>
 </resources>
