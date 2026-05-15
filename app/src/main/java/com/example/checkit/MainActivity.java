@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Navigate to UserInfoActivity
-                Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
+                Intent intent = new Intent(MainActivity.this, AccountMenuActivity.class);
                 startActivity(intent);
             }
         });

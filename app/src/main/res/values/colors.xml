@@ -15,4 +15,6 @@
     <color name="edit_icon_tint">#9575CD</color>
     <color name="task_checked_tint">#9575CD</color>
     <color name="task_unchecked_tint">#E0E0E0</color>
+    <color name="account_card_background">#FDF7FA</color>
+    <color name="account_divider">#F0E4EB</color>
 </resources>

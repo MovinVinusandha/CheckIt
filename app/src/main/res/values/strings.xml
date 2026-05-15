@@ -25,4 +25,15 @@
     <string name="task_2_subtitle">Daily Routine</string>
     <string name="task_3_title">Check emails</string>
     <string name="task_3_subtitle">Work</string>
+    <string name="hi_user">Hi, User!</string>
+    <string name="user_email">user@example.com</string>
+    <string name="switch_account">Switch account</string>
+    <string name="account_1_name">Alex Johnson</string>
+    <string name="account_1_email">alex.j@example.com</string>
+    <string name="account_2_name">Jordan Smith</string>
+    <string name="account_2_email">j.smith@work.com</string>
+    <string name="account_3_name">Sam Wilson</string>
+    <string name="account_3_email">sam.w@personal.com</string>
+    <string name="add_another_account">Add another account</string>
+    <string name="view_dev_info">View Developer Information</string>
 </resources>
