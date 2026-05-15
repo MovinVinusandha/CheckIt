@@ -36,4 +36,14 @@
     <string name="account_3_email">sam.w@personal.com</string>
     <string name="add_another_account">Add another account</string>
     <string name="view_dev_info">View Developer Information</string>
+    <string name="dev_info_title">Dev Info</string>
+    <string name="dev_identity_header">DEVELOPER IDENTITY</string>
+    <string name="dev_name">Movin Vinusandha</string>
+    <string name="student_id_label">Student ID</string>
+    <string name="student_id_value">2023t01853</string>
+    <string name="department_label">Department</string>
+    <string name="department_value">ICT</string>
+    <string name="contact_label">Contact</string>
+    <string name="contact_value">2023t01853@stu.cmb.ac.lk</string>
+    <string name="system_version_label">System Version</string>
 </resources>
