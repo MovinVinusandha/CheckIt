@@ -46,4 +46,13 @@
     <string name="contact_label">Contact</string>
     <string name="contact_value">2023t01853@stu.cmb.ac.lk</string>
     <string name="system_version_label">System Version</string>
+    <string name="user_info_title">User Info</string>
+    <string name="user_name">Alex Rivers</string>
+    <string name="user_job_title">Senior Design Architect</string>
+    <string name="email_address_label">EMAIL ADDRESS</string>
+    <string name="user_email_value">alexrivers@gmail.com</string>
+    <string name="timezone_label">TIMEZONE</string>
+    <string name="timezone_value">Pacific Standard Time (GMT-8)</string>
+    <string name="edit_profile_btn">Edit Profile</string>
+    <string name="sign_out_btn">Sign-out</string>
 </resources>
