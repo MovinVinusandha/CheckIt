@@ -60,4 +60,7 @@
     <string name="job_title_label">Job Title</string>
     <string name="save_changes_btn">Save Changes</string>
     <string name="discard_changes_btn">Discard Changes</string>
+    <string name="new_task_header">New task</string>
+    <string name="add_details_hint">Add details</string>
+    <string name="save_btn">Save</string>
 </resources>
