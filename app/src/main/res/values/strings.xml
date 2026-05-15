@@ -16,4 +16,13 @@
     <string name="confirm_password_hint">Confirm your password</string>
     <string name="signup_button_text">Signup</string>
     <string name="login_prompt">Already have an account? <b><font color="#6750A4">Log in</font></b></string>
+    <string name="my_tasks">My Tasks</string>
+    <string name="queue_header">Queue</string>
+    <string name="tasks_left">3 Tasks Left</string>
+    <string name="task_1_title">Weekly Grocery Run</string>
+    <string name="task_1_subtitle">Household</string>
+    <string name="task_2_title">Morning Meditation</string>
+    <string name="task_2_subtitle">Daily Routine</string>
+    <string name="task_3_title">Check emails</string>
+    <string name="task_3_subtitle">Work</string>
 </resources>

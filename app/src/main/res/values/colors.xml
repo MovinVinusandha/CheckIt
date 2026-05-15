@@ -8,4 +8,11 @@
     <color name="branding_purple">#6750A4</color>
     <color name="light_gray">#F5F5F5</color>
     <color name="hint_color">#9E9E9E</color>
+    <color name="task_card_background">#F8F4FF</color>
+    <color name="delete_icon_background">#FFEBEE</color>
+    <color name="edit_icon_background">#EDE7F6</color>
+    <color name="delete_icon_tint">#E57373</color>
+    <color name="edit_icon_tint">#9575CD</color>
+    <color name="task_checked_tint">#9575CD</color>
+    <color name="task_unchecked_tint">#E0E0E0</color>
 </resources>
