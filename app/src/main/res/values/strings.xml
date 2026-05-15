@@ -9,4 +9,11 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="login_button_text">Login</string>
     <string name="signup_prompt">Don\'t have an account? <b><font color="#6750A4">Sign up</font></b></string>
+    <string name="email_label">Email</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="username_hint_signup">Choose a username</string>
+    <string name="confirm_password_label">Confirm Password</string>
+    <string name="confirm_password_hint">Confirm your password</string>
+    <string name="signup_button_text">Signup</string>
+    <string name="login_prompt">Already have an account? <b><font color="#6750A4">Log in</font></b></string>
 </resources>
