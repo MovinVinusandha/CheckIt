@@ -4,18 +4,28 @@ import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     private List<Task> taskList;
+    private OnTaskClickListener listener;
 
-    public TaskAdapter(List<Task> taskList) {
+    public interface OnTaskClickListener {
+        void onEditClick(int position);
+        void onDeleteClick(int position);
+        void onTaskChecked(int position, boolean isChecked);
+    }
+
+    public TaskAdapter(List<Task> taskList, OnTaskClickListener listener) {
         this.taskList = taskList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -31,19 +41,40 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.tvTitle.setText(task.getTitle());
         holder.tvSubtitle.setText(task.getSubtitle());
 
+        // Handle Visual State
         if (task.isCompleted()) {
-            holder.cbTask.setBackgroundTintList(ContextCompat.getColorStateList(holder.itemView.getContext(), R.color.task_checked_tint));
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.darker_gray));
-            holder.tvSubtitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.darker_gray));
             holder.editContainer.setVisibility(View.GONE);
         } else {
-            holder.cbTask.setBackgroundTintList(ContextCompat.getColorStateList(holder.itemView.getContext(), R.color.task_unchecked_tint));
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             holder.tvTitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.black));
-            holder.tvSubtitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.darker_gray));
             holder.editContainer.setVisibility(View.VISIBLE);
         }
+
+        // Setup Checkbox
+        holder.cbTask.setOnCheckedChangeListener(null); // Reset listener to avoid recycling bugs
+        holder.cbTask.setChecked(task.isCompleted());
+        holder.cbTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (listener != null) {
+                    listener.onTaskChecked(holder.getAdapterPosition(), isChecked);
+                }
+            }
+        });
+
+        holder.editContainer.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onEditClick(holder.getAdapterPosition());
+            }
+        });
+
+        holder.deleteContainer.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onDeleteClick(holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -52,7 +83,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        View cbTask;
+        MaterialCheckBox cbTask;
         TextView tvTitle, tvSubtitle;
         View editContainer, deleteContainer;
 
