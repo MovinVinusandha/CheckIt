@@ -3,6 +3,10 @@
     <style name="Base.Theme.CheckIt" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- Replace 'your_font_name' with the exact name of your file (without the .ttf) -->
+        <item name="android:fontFamily">@font/inter_variablefont_opszwght</item>
+        <item name="fontFamily">@font/inter_variablefont_opszwght</item>
     </style>
 
     <style name="Theme.CheckIt" parent="Base.Theme.CheckIt" />
