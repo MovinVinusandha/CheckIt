@@ -3,6 +3,7 @@ package com.example.checkit;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -33,9 +34,18 @@ public class EditProfileActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.et_email);
         actTimezone = findViewById(R.id.act_timezone);
 
-        // Make email read-only
-        etEmail.setEnabled(false);
-        etEmail.setFocusable(false);
+        // Populate Timezone dropdown
+        String[] timezones = {
+                "Pacific Standard Time (GMT-8)",
+                "Eastern Standard Time (GMT-5)",
+                "Greenwich Mean Time (GMT)",
+                "Central European Time (GMT+1)",
+                "Sri Lanka Standard Time (GMT+5:30)",
+                "Japan Standard Time (GMT+9)"
+        };
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, timezones);
+        actTimezone.setAdapter(adapter);
 
         // Pre-fill data
         etFullName.setText(prefs.getString("name", "Alex Rivers"));

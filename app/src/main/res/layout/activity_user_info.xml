@@ -30,7 +30,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/iv_top_profile"
+            android:id="@+id/iconTopMenu"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_account_circle"

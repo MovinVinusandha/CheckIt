@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
@@ -33,6 +34,15 @@ public class UserInfoActivity extends AppCompatActivity {
         tvTitle = findViewById(R.id.tv_job_title);
         tvEmail = findViewById(R.id.user_email_value);
         tvTimezone = findViewById(R.id.timezone_value);
+
+        ImageView iconTopMenu = findViewById(R.id.iconTopMenu);
+        iconTopMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserInfoActivity.this, AccountMenuActivity.class);
+                startActivity(intent);
+            }
+        });
 
         MaterialButton btnEditProfile = findViewById(R.id.btn_edit_profile);
         btnEditProfile.setOnClickListener(new View.OnClickListener() {

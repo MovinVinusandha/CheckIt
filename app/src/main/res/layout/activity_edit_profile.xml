@@ -114,13 +114,19 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"
         android:hint="@string/email_address_label"
+        app:boxBackgroundColor="#F5F5F5"
+        app:boxStrokeColor="#CCCCCC"
         app:layout_constraintTop_toBottomOf="@id/til_job_title">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/user_email_value" />
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:longClickable="false"
+            android:text="@string/user_email_value"
+            android:textColor="#888888" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
