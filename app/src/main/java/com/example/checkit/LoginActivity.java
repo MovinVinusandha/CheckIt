@@ -42,9 +42,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btn_login);
         tvSignupPrompt = findViewById(R.id.tv_signup_prompt);
 
-        // Set HTML text for signup prompt
-        tvSignupPrompt.setText(Html.fromHtml(getString(R.string.signup_prompt), Html.FROM_HTML_MODE_LEGACY));
-
         // Login button click listener
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
