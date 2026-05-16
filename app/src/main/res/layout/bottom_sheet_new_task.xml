@@ -36,6 +36,20 @@
         android:textColorHint="@android:color/darker_gray"
         android:textSize="16sp" />
 
+    <EditText
+        android:id="@+id/editTextCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:hint="@string/category_hint"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:textColor="@color/black"
+        android:textColorHint="@android:color/darker_gray"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,6 +58,7 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/iconAddDate"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -51,6 +66,7 @@
             android:src="@drawable/ic_calendar" />
 
         <ImageButton
+            android:id="@+id/iconAddPriority"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
@@ -59,6 +75,7 @@
             android:src="@drawable/ic_flag" />
 
         <ImageButton
+            android:id="@+id/iconAddTag"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
@@ -67,6 +84,7 @@
             android:src="@drawable/ic_tag" />
 
         <ImageButton
+            android:id="@+id/iconAddReminder"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"

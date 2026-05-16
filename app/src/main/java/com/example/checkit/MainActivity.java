@@ -83,21 +83,41 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         bottomSheetDialog.setContentView(bottomSheetView);
 
         EditText etTaskDetails = bottomSheetView.findViewById(R.id.et_task_details);
+        EditText etTaskCategory = bottomSheetView.findViewById(R.id.editTextCategory);
+        View iconAddTag = bottomSheetView.findViewById(R.id.iconAddTag);
         View btnSave = bottomSheetView.findViewById(R.id.btn_save_task);
 
         // If editing, pre-fill the text
         if (position != -1) {
-            etTaskDetails.setText(taskList.get(position).getTitle());
+            Task task = taskList.get(position);
+            etTaskDetails.setText(task.getTitle());
+            if (task.getSubtitle() != null && !task.getSubtitle().isEmpty() && !task.getSubtitle().equals("General")) {
+                etTaskCategory.setText(task.getSubtitle());
+                etTaskCategory.setVisibility(View.VISIBLE);
+            }
         }
+
+        iconAddTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etTaskCategory.setVisibility(View.VISIBLE);
+                etTaskCategory.requestFocus();
+            }
+        });
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String taskTitle = etTaskDetails.getText().toString().trim();
+                String taskCategory = etTaskCategory.getText().toString().trim();
+                if (taskCategory.isEmpty()) {
+                    taskCategory = "General";
+                }
+
                 if (!taskTitle.isEmpty()) {
                     if (position == -1) {
                         // Create new task and add to list
-                        Task newTask = new Task(taskTitle, "General", false);
+                        Task newTask = new Task(taskTitle, taskCategory, false);
                         taskList.add(0, newTask); // Add to top
                         taskAdapter.notifyItemInserted(0);
                         tasksRecyclerView.scrollToPosition(0);
@@ -105,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         // Update existing task
                         Task task = taskList.get(position);
                         task.setTitle(taskTitle);
+                        task.setSubtitle(taskCategory);
                         taskAdapter.notifyItemChanged(position);
                     }
                     saveTasks();

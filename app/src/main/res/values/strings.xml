@@ -63,4 +63,5 @@
     <string name="new_task_header">New task</string>
     <string name="add_details_hint">Add details</string>
     <string name="save_btn">Save</string>
+    <string name="category_hint">Add a category (e.g., Work, Household)</string>
 </resources>
