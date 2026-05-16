@@ -1,6 +1,7 @@
 package com.example.checkit;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -85,6 +86,16 @@ public class SignupActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            // Extract default name from email
+                            String defaultName = email.split("@")[0];
+                            
+                            // Save email and name to SharedPreferences
+                            SharedPreferences prefs = getSharedPreferences("UserProfile", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("email", email);
+                            editor.putString("name", defaultName);
+                            editor.apply();
+
                             Toast.makeText(SignupActivity.this, "Account created successfully!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(SignupActivity.this, MainActivity.class);
                             startActivity(intent);

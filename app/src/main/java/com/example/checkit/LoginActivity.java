@@ -1,6 +1,7 @@
 package com.example.checkit;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -79,6 +80,19 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            // Save email to SharedPreferences
+                            SharedPreferences prefs = getSharedPreferences("UserProfile", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("email", email);
+
+                            // Check if name exists or is placeholder
+                            String existingName = prefs.getString("name", "Alex Rivers");
+                            if (existingName.equals("Alex Rivers") || existingName.isEmpty()) {
+                                String defaultName = email.split("@")[0];
+                                editor.putString("name", defaultName);
+                            }
+                            editor.apply();
+
                             Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);

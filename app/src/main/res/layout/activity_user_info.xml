@@ -137,6 +137,7 @@
                     android:textSize="10sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/user_email_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/user_email_value"
@@ -192,6 +193,7 @@
                     android:textSize="10sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/timezone_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/timezone_value"
