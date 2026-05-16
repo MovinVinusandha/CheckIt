@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private RecyclerView tasksRecyclerView;
     private TaskAdapter taskAdapter;
     private List<Task> taskList;
-    private TextView textEmptyState;
+    private TextView textEmptyState, textTasksLeft;
     private FirebaseFirestore db;
     private String userId;
 
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         }
 
         textEmptyState = findViewById(R.id.textEmptyState);
+        textTasksLeft = findViewById(R.id.textTasksLeft);
 
         // Hide action bar for a custom header look
         if (getSupportActionBar() != null) {
@@ -160,9 +161,27 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                             taskList.add(task);
                         }
                         taskAdapter.notifyDataSetChanged();
+                        updateTaskCount();
                         checkEmptyState();
                     }
                 });
+    }
+
+    private void updateTaskCount() {
+        int count = 0;
+        for (Task task : taskList) {
+            if (!task.isCompleted()) {
+                count++;
+            }
+        }
+
+        String countText;
+        if (count == 1) {
+            countText = "1 Task Left";
+        } else {
+            countText = count + " Tasks Left";
+        }
+        textTasksLeft.setText(countText);
     }
 
     private void checkEmptyState() {
