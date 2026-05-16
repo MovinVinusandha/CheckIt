@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private List<Task> taskList;
     private SharedPreferences sharedPreferences;
     private Gson gson;
+    private TextView textEmptyState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         sharedPreferences = getSharedPreferences("checkit_prefs", Context.MODE_PRIVATE);
         gson = new Gson();
+        textEmptyState = findViewById(R.id.textEmptyState);
 
         // Hide action bar for a custom header look
         if (getSupportActionBar() != null) {
@@ -60,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         tasksRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new TaskAdapter(taskList, this);
         tasksRecyclerView.setAdapter(taskAdapter);
+
+        // Initial empty state check
+        checkEmptyState();
 
         // Initialize FAB and set click listener to show bottom sheet
         FloatingActionButton fabAddTask = findViewById(R.id.fab_add_task);
@@ -102,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         taskAdapter.notifyItemChanged(position);
                     }
                     saveTasks();
+                    checkEmptyState();
                 }
                 bottomSheetDialog.dismiss();
             }
@@ -132,6 +139,16 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         }
     }
 
+    private void checkEmptyState() {
+        if (taskList.isEmpty()) {
+            tasksRecyclerView.setVisibility(View.GONE);
+            textEmptyState.setVisibility(View.VISIBLE);
+        } else {
+            tasksRecyclerView.setVisibility(View.VISIBLE);
+            textEmptyState.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onEditClick(int position) {
         showNewTaskBottomSheet(position);
@@ -142,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         taskList.remove(position);
         taskAdapter.notifyItemRemoved(position);
         saveTasks();
+        checkEmptyState();
     }
 
     @Override
