@@ -91,7 +91,7 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
-        // Check if username is unique in Firestore
+        // 1. Check if username is unique in Firestore
         db.collection("users").whereEqualTo("username", username).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -99,10 +99,26 @@ public class SignupActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             if (!task.getResult().isEmpty()) {
                                 // Username already exists
-                                Toast.makeText(SignupActivity.this, "Username is already taken. Please choose another.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivity.this, "Username is already taken.", Toast.LENGTH_SHORT).show();
                             } else {
-                                // Username is available, proceed with Firebase Auth
-                                createUser(email, username, password);
+                                // Username is available, now 2. Check if email is unique in Firestore
+                                db.collection("users").whereEqualTo("email", email).get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    if (!task.getResult().isEmpty()) {
+                                                        // Email already exists
+                                                        Toast.makeText(SignupActivity.this, "Email is already registered. Please log in.", Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        // Both unique, proceed with Firebase Auth
+                                                        createUser(email, username, password);
+                                                    }
+                                                } else {
+                                                    Toast.makeText(SignupActivity.this, "Error checking email: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
                             }
                         } else {
                             Toast.makeText(SignupActivity.this, "Error checking username: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
