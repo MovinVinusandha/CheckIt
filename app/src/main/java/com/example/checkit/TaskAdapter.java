@@ -46,10 +46,20 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvTitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.darker_gray));
             holder.editContainer.setVisibility(View.GONE);
+            
+            // Fix 1: Show filled circle check icon
+            holder.cbTask.setButtonDrawable(R.drawable.ic_check_circle);
+            // Fix 2: Make the whole card look faded
+            holder.itemView.setAlpha(0.6f);
         } else {
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             holder.tvTitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.black));
             holder.editContainer.setVisibility(View.VISIBLE);
+            
+            // Fix 1: Show empty circle icon
+            holder.cbTask.setButtonDrawable(R.drawable.ic_circle_empty);
+            // Fix 2: Reset card to full opacity
+            holder.itemView.setAlpha(1.0f);
         }
 
         // Setup Checkbox
