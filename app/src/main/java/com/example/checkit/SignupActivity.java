@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -90,6 +91,27 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
+        // Check if username is unique in Firestore
+        db.collection("users").whereEqualTo("username", username).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (!task.getResult().isEmpty()) {
+                                // Username already exists
+                                Toast.makeText(SignupActivity.this, "Username is already taken. Please choose another.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Username is available, proceed with Firebase Auth
+                                createUser(email, username, password);
+                            }
+                        } else {
+                            Toast.makeText(SignupActivity.this, "Error checking username: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void createUser(String email, String username, String password) {
         // Firebase User Creation
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
