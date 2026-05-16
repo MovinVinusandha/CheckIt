@@ -17,6 +17,12 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -84,11 +90,40 @@ public class LoginActivity extends AppCompatActivity {
 
                             // Check if name exists or is placeholder
                             String existingName = prefs.getString("name", "Alex Rivers");
+                            String defaultName = email.split("@")[0];
                             if (existingName.equals("Alex Rivers") || existingName.isEmpty()) {
-                                String defaultName = email.split("@")[0];
                                 editor.putString("name", defaultName);
                             }
                             editor.apply();
+
+                            // Update AllAccounts list
+                            SharedPreferences allAccountsPrefs = getSharedPreferences("AllAccounts", MODE_PRIVATE);
+                            Gson gson = new Gson();
+                            String json = allAccountsPrefs.getString("accounts_list", null);
+                            Type type = new TypeToken<ArrayList<SavedAccount>>() {}.getType();
+                            List<SavedAccount> savedAccounts = gson.fromJson(json, type);
+
+                            if (savedAccounts == null) {
+                                savedAccounts = new ArrayList<>();
+                            }
+
+                            // Check for duplicates
+                            boolean exists = false;
+                            for (SavedAccount account : savedAccounts) {
+                                if (account.getEmail().equalsIgnoreCase(email)) {
+                                    exists = true;
+                                    // Update password if changed
+                                    account.setPassword(password);
+                                    break;
+                                }
+                            }
+
+                            if (!exists) {
+                                savedAccounts.add(new SavedAccount(email, password, defaultName));
+                            }
+
+                            String updatedJson = gson.toJson(savedAccounts);
+                            allAccountsPrefs.edit().putString("accounts_list", updatedJson).apply();
 
                             Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);

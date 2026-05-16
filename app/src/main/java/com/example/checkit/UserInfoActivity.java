@@ -8,6 +8,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserInfoActivity extends AppCompatActivity {
 
@@ -41,6 +47,29 @@ public class UserInfoActivity extends AppCompatActivity {
         btnSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Remove current user from saved accounts list
+                String currentEmail = FirebaseAuth.getInstance().getCurrentUser() != null ? 
+                        FirebaseAuth.getInstance().getCurrentUser().getEmail() : "";
+                
+                if (!currentEmail.isEmpty()) {
+                    SharedPreferences allAccountsPrefs = getSharedPreferences("AllAccounts", MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    String json = allAccountsPrefs.getString("accounts_list", null);
+                    Type type = new TypeToken<ArrayList<SavedAccount>>() {}.getType();
+                    List<SavedAccount> savedAccounts = gson.fromJson(json, type);
+                    
+                    if (savedAccounts != null) {
+                        for (int i = 0; i < savedAccounts.size(); i++) {
+                            if (savedAccounts.get(i).getEmail().equalsIgnoreCase(currentEmail)) {
+                                savedAccounts.remove(i);
+                                break;
+                            }
+                        }
+                        String updatedJson = gson.toJson(savedAccounts);
+                        allAccountsPrefs.edit().putString("accounts_list", updatedJson).apply();
+                    }
+                }
+
                 // Firebase Sign-out
                 FirebaseAuth.getInstance().signOut();
 
