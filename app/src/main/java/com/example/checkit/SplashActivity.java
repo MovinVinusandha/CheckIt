@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -36,11 +37,22 @@ public class SplashActivity extends AppCompatActivity {
             );
         }
 
-        // Navigate to LoginActivity after 3 seconds
+        // Navigate after 3 seconds
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                Intent intent;
+                
+                // Auto-login check
+                if (mAuth.getCurrentUser() != null) {
+                    // User is logged in, go to MainActivity
+                    intent = new Intent(SplashActivity.this, MainActivity.class);
+                } else {
+                    // User is not logged in, go to LoginActivity
+                    intent = new Intent(SplashActivity.this, LoginActivity.class);
+                }
+
                 startActivity(intent);
                 finish(); // Close SplashActivity
             }
