@@ -73,6 +73,18 @@
             android:text="@string/user_email"
             android:textColor="@android:color/darker_gray"
             android:textSize="14sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_view_profile"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:minWidth="200dp"
+            android:text="View Profile"
+            android:textAllCaps="false"
+            android:textColor="#49454F"
+            app:strokeColor="#CAC4D0" />
     </LinearLayout>
 
     <!-- Account List Card -->
@@ -82,8 +94,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="24dp"
-        app:cardBackgroundColor="@color/account_card_background"
-        app:cardCornerRadius="24dp"
+        app:cardBackgroundColor="#F7F2FA"
+        app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -97,41 +109,8 @@
             android:padding="16dp">
 
             <!-- Switch Account Header -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/switch_account"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/ic_expand_more" />
-            </RelativeLayout>
-
-            <!-- Dynamic Account List -->
             <LinearLayout
-                android:id="@+id/accountListContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="8dp"
-                android:background="@color/account_divider" />
-
-            <!-- Add Another Account -->
-            <LinearLayout
-                android:id="@+id/btnAddAccount"
+                android:id="@+id/headerSwitchAccount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -139,22 +118,72 @@
                 android:foreground="?attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingVertical="8dp">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_add"
-                    app:tint="@color/black" />
+                android:paddingBottom="8dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="@string/add_another_account"
-                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:text="@string/switch_account"
+                    android:textColor="#1D1B20"
                     android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_switch_arrow"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_expand_more"
+                    app:tint="#1D1B20" />
+            </LinearLayout>
+
+            <!-- Collapsible Area -->
+            <LinearLayout
+                android:id="@+id/collapsibleAccountArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Dynamic Account List -->
+                <LinearLayout
+                    android:id="@+id/accountListContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="@color/account_divider" />
+
+                <!-- Add Another Account -->
+                <LinearLayout
+                    android:id="@+id/btnAddAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_add"
+                        app:tint="#1D1B20" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/add_another_account"
+                        android:textColor="#1D1B20"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
@@ -166,7 +195,7 @@
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="#9575CD"
         android:text="@string/view_dev_info"
         android:textAllCaps="false"
@@ -174,8 +203,8 @@
         app:cornerRadius="32dp"
         app:icon="@drawable/ic_info"
         app:iconGravity="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/account_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

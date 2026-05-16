@@ -2,6 +2,7 @@ package com.example.checkit;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,13 @@ import java.util.List;
 public class AccountMenuActivity extends AppCompatActivity {
 
     private TextView tvGreeting, tvEmail;
-    private LinearLayout accountListContainer;
-    private View btnAddAccount;
+    private LinearLayout accountListContainer, collapsibleAccountArea;
+    private View headerSwitchAccount, btnAddAccount;
+    private ImageView ivSwitchArrow;
+    private MaterialButton btnViewProfile;
     private FirebaseAuth mAuth;
     private Gson gson;
+    private boolean isAccountAreaExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,41 +53,49 @@ public class AccountMenuActivity extends AppCompatActivity {
         tvGreeting = findViewById(R.id.tv_greeting);
         tvEmail = findViewById(R.id.tv_email);
         accountListContainer = findViewById(R.id.accountListContainer);
+        collapsibleAccountArea = findViewById(R.id.collapsibleAccountArea);
+        headerSwitchAccount = findViewById(R.id.headerSwitchAccount);
         btnAddAccount = findViewById(R.id.btnAddAccount);
+        ivSwitchArrow = findViewById(R.id.iv_switch_arrow);
+        btnViewProfile = findViewById(R.id.btn_view_profile);
 
         ImageView ivClose = findViewById(R.id.iv_close);
-        ivClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        ivClose.setOnClickListener(v -> finish());
 
+        // Close menu and return to main screen
         ImageView ivMainProfile = findViewById(R.id.iv_main_profile);
-        ivMainProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AccountMenuActivity.this, UserInfoActivity.class);
-                startActivity(intent);
-            }
+        ivMainProfile.setOnClickListener(v -> finish());
+
+        // Navigate to Profile Details
+        btnViewProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(AccountMenuActivity.this, UserInfoActivity.class);
+            startActivity(intent);
         });
 
-        btnAddAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AccountMenuActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
+        // Toggle collapsible account section
+        headerSwitchAccount.setOnClickListener(v -> toggleAccountArea());
+
+        btnAddAccount.setOnClickListener(v -> {
+            Intent intent = new Intent(AccountMenuActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
 
         MaterialButton btnDevInfo = findViewById(R.id.btn_dev_info);
-        btnDevInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AccountMenuActivity.this, DevInfoActivity.class);
-                startActivity(intent);
-            }
+        btnDevInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(AccountMenuActivity.this, DevInfoActivity.class);
+            startActivity(intent);
         });
+    }
+
+    private void toggleAccountArea() {
+        isAccountAreaExpanded = !isAccountAreaExpanded;
+        if (isAccountAreaExpanded) {
+            collapsibleAccountArea.setVisibility(View.VISIBLE);
+            ivSwitchArrow.animate().rotation(180f).setDuration(200).start();
+        } else {
+            collapsibleAccountArea.setVisibility(View.GONE);
+            ivSwitchArrow.animate().rotation(0f).setDuration(200).start();
+        }
     }
 
     @Override
@@ -114,16 +126,17 @@ public class AccountMenuActivity extends AppCompatActivity {
             String currentUserEmail = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getEmail() : "";
             
             for (SavedAccount account : savedAccounts) {
-                // Inflate item layout
                 View itemView = LayoutInflater.from(this).inflate(R.layout.item_saved_account, accountListContainer, false);
                 
                 TextView tvName = itemView.findViewById(R.id.tv_account_name);
-                TextView tvEmail = itemView.findViewById(R.id.tv_account_email);
+                TextView tvEmailItem = itemView.findViewById(R.id.tv_account_email);
                 
                 tvName.setText(account.getName());
-                tvEmail.setText(account.getEmail());
+                tvName.setTextColor(Color.parseColor("#1D1B20"));
                 
-                // If it's the current user, maybe style differently or skip
+                tvEmailItem.setText(account.getEmail());
+                tvEmailItem.setTextColor(Color.parseColor("#49454F"));
+                
                 if (account.getEmail().equalsIgnoreCase(currentUserEmail)) {
                     itemView.setEnabled(false);
                     itemView.setAlpha(0.5f);
@@ -138,26 +151,23 @@ public class AccountMenuActivity extends AppCompatActivity {
 
     private void switchAccount(SavedAccount account) {
         mAuth.signInWithEmailAndPassword(account.getEmail(), account.getPassword())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Update UserProfile SharedPreferences for the new user
-                            SharedPreferences prefs = getSharedPreferences("UserProfile", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putString("email", account.getEmail());
-                            editor.putString("name", account.getName());
-                            editor.apply();
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        SharedPreferences prefs = getSharedPreferences("UserProfile", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString("email", account.getEmail());
+                        editor.putString("name", account.getName());
+                        editor.apply();
 
-                            Toast.makeText(AccountMenuActivity.this, "Switched to " + account.getName(), Toast.LENGTH_SHORT).show();
-                            
-                            Intent intent = new Intent(AccountMenuActivity.this, MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Toast.makeText(AccountMenuActivity.this, "Switch failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                        Toast.makeText(AccountMenuActivity.this, "Switched to " + account.getName(), Toast.LENGTH_SHORT).show();
+                        
+                        Intent intent = new Intent(AccountMenuActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        String error = task.getException() != null ? task.getException().getMessage() : "Unknown error";
+                        Toast.makeText(AccountMenuActivity.this, "Switch failed: " + error, Toast.LENGTH_LONG).show();
                     }
                 });
     }
