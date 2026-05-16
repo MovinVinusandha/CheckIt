@@ -21,21 +21,10 @@
 
         <ImageView
             android:id="@+id/img_logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="223dp"
+            android:layout_height="232dp"
             android:contentDescription="@string/content_desc_logo"
-            android:src="@android:drawable/checkbox_on_background"
-            app:tint="@color/white" />
-
-        <TextView
-            android:id="@+id/tv_app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="36sp"
-            android:textStyle="normal" />
+            android:src="@drawable/logo_splash" />
     </LinearLayout>
 
     <!-- Version Text at the Bottom -->
