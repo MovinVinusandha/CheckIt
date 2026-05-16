@@ -1,13 +1,12 @@
 package com.example.checkit;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,10 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,17 +26,25 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private RecyclerView tasksRecyclerView;
     private TaskAdapter taskAdapter;
     private List<Task> taskList;
-    private SharedPreferences sharedPreferences;
-    private Gson gson;
     private TextView textEmptyState;
+    private FirebaseFirestore db;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedPreferences = getSharedPreferences("checkit_prefs", Context.MODE_PRIVATE);
-        gson = new Gson();
+        db = FirebaseFirestore.getInstance();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else {
+            // Fallback: Redirect to login if user session is lost
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         textEmptyState = findViewById(R.id.textEmptyState);
 
         // Hide action bar for a custom header look
@@ -55,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
         });
 
-        // Load Task List from persistence
-        loadTasks();
+        // Initialize Task List
+        taskList = new ArrayList<>();
 
         // Setup RecyclerView
         tasksRecyclerView = findViewById(R.id.tasksRecyclerView);
@@ -64,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         taskAdapter = new TaskAdapter(taskList, this);
         tasksRecyclerView.setAdapter(taskAdapter);
 
-        // Initial empty state check
-        checkEmptyState();
+        // Load Task List from Firestore
+        loadTasks();
 
         // Initialize FAB and set click listener to show bottom sheet
         FloatingActionButton fabAddTask = findViewById(R.id.fab_add_task);
@@ -116,20 +123,20 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
                 if (!taskTitle.isEmpty()) {
                     if (position == -1) {
-                        // Create new task and add to list
+                        // Create new task and add to Firestore
                         Task newTask = new Task(taskTitle, taskCategory, false);
-                        taskList.add(0, newTask); // Add to top
-                        taskAdapter.notifyItemInserted(0);
-                        tasksRecyclerView.scrollToPosition(0);
+                        db.collection("users").document(userId).collection("tasks")
+                                .add(newTask)
+                                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error adding task", Toast.LENGTH_SHORT).show());
                     } else {
-                        // Update existing task
+                        // Update existing task in Firestore
                         Task task = taskList.get(position);
                         task.setTitle(taskTitle);
                         task.setSubtitle(taskCategory);
-                        taskAdapter.notifyItemChanged(position);
+                        db.collection("users").document(userId).collection("tasks").document(task.getTaskId())
+                                .set(task)
+                                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error updating task", Toast.LENGTH_SHORT).show());
                     }
-                    saveTasks();
-                    checkEmptyState();
                 }
                 bottomSheetDialog.dismiss();
             }
@@ -138,26 +145,24 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         bottomSheetDialog.show();
     }
 
-    private void saveTasks() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String json = gson.toJson(taskList);
-        editor.putString("tasks_list", json);
-        editor.apply();
-    }
-
     private void loadTasks() {
-        String json = sharedPreferences.getString("tasks_list", null);
-        Type type = new TypeToken<ArrayList<Task>>() {}.getType();
-        taskList = gson.fromJson(json, type);
+        db.collection("users").document(userId).collection("tasks")
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Toast.makeText(MainActivity.this, "Error loading tasks", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-        if (taskList == null) {
-            taskList = new ArrayList<>();
-            // Add some initial dummy data if list is empty for the first time
-            taskList.add(new Task("Weekly Grocery Run", "Household", false));
-            taskList.add(new Task("Morning Meditation", "Daily Routine", false));
-            taskList.add(new Task("Check emails", "Work", true));
-            saveTasks();
-        }
+                    if (value != null) {
+                        taskList.clear();
+                        for (QueryDocumentSnapshot doc : value) {
+                            Task task = doc.toObject(Task.class);
+                            taskList.add(task);
+                        }
+                        taskAdapter.notifyDataSetChanged();
+                        checkEmptyState();
+                    }
+                });
     }
 
     private void checkEmptyState() {
@@ -177,16 +182,20 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     @Override
     public void onDeleteClick(int position) {
-        taskList.remove(position);
-        taskAdapter.notifyItemRemoved(position);
-        saveTasks();
-        checkEmptyState();
+        String taskId = taskList.get(position).getTaskId();
+        db.collection("users").document(userId).collection("tasks").document(taskId)
+                .delete()
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error deleting task", Toast.LENGTH_SHORT).show());
     }
 
     @Override
     public void onTaskChecked(int position, boolean isChecked) {
-        taskList.get(position).setCompleted(isChecked);
-        taskAdapter.notifyItemChanged(position);
-        saveTasks();
+        Task task = taskList.get(position);
+        task.setCompleted(isChecked);
+        String taskId = task.getTaskId();
+        
+        db.collection("users").document(userId).collection("tasks").document(taskId)
+                .set(task)
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error updating status", Toast.LENGTH_SHORT).show());
     }
 }
