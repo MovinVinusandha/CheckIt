@@ -85,6 +85,15 @@ public class AccountMenuActivity extends AppCompatActivity {
 
     private void toggleAccountArea() {
         isAccountAreaExpanded = !isAccountAreaExpanded;
+        
+        // Save state to SharedPreferences
+        SharedPreferences menuPrefs = getSharedPreferences("MenuPrefs", MODE_PRIVATE);
+        menuPrefs.edit().putBoolean("isExpanded", isAccountAreaExpanded).apply();
+        
+        applyExpandCollapseState();
+    }
+
+    private void applyExpandCollapseState() {
         if (isAccountAreaExpanded) {
             collapsibleAccountArea.setVisibility(View.VISIBLE);
             ivSwitchArrow.animate().rotation(180f).setDuration(200).start();
@@ -97,6 +106,12 @@ public class AccountMenuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        
+        // Load expansion state
+        SharedPreferences menuPrefs = getSharedPreferences("MenuPrefs", MODE_PRIVATE);
+        isAccountAreaExpanded = menuPrefs.getBoolean("isExpanded", false);
+        applyExpandCollapseState();
+
         loadProfile();
         populateSavedAccounts();
     }
@@ -112,6 +127,8 @@ public class AccountMenuActivity extends AppCompatActivity {
 
     private void populateSavedAccounts() {
         accountListContainer.removeAllViews();
+        // Make the container background darker as requested
+        accountListContainer.setBackgroundColor(Color.parseColor("#E8E2EB"));
         
         SharedPreferences allAccountsPrefs = getSharedPreferences("AllAccounts", MODE_PRIVATE);
         String json = allAccountsPrefs.getString("accounts_list", null);
@@ -122,23 +139,24 @@ public class AccountMenuActivity extends AppCompatActivity {
             String currentUserEmail = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getEmail() : "";
             
             for (SavedAccount account : savedAccounts) {
+                // Filter Current User: Skip the account if it's the one currently logged in
+                if (account.getEmail().equalsIgnoreCase(currentUserEmail)) {
+                    continue;
+                }
+
                 View itemView = LayoutInflater.from(this).inflate(R.layout.item_saved_account, accountListContainer, false);
                 
                 TextView tvName = itemView.findViewById(R.id.tv_account_name);
                 TextView tvEmailItem = itemView.findViewById(R.id.tv_account_email);
                 
+                // Darker List Colors
                 tvName.setText(account.getName());
-                tvName.setTextColor(Color.parseColor("#1D1B20"));
+                tvName.setTextColor(Color.parseColor("#000000"));
                 
                 tvEmailItem.setText(account.getEmail());
                 tvEmailItem.setTextColor(Color.parseColor("#49454F"));
                 
-                if (account.getEmail().equalsIgnoreCase(currentUserEmail)) {
-                    itemView.setEnabled(false);
-                    itemView.setAlpha(0.5f);
-                } else {
-                    itemView.setOnClickListener(v -> switchAccount(account));
-                }
+                itemView.setOnClickListener(v -> switchAccount(account));
                 
                 accountListContainer.addView(itemView);
             }
