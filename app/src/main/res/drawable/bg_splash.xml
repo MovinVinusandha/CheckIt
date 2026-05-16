@@ -1,0 +1,55 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="412dp"
+    android:height="892dp"
+    android:viewportWidth="412"
+    android:viewportHeight="892">
+  <group>
+    <clip-path
+        android:pathData="M0,0h412v892h-412z"/>
+    <path
+        android:pathData="M0,0h412v892h-412z">
+      <aapt:attr name="android:fillColor">
+        <gradient
+            android:startX="-130.47"
+            android:startY="124.62"
+            android:endX="511.62"
+            android:endY="796.84"
+            android:type="linear">
+          <item android:offset="0" android:color="#FF6750A4"/>
+          <item android:offset="0.5" android:color="#FF4F378A"/>
+          <item android:offset="1" android:color="#FF625B71"/>
+        </gradient>
+      </aapt:attr>
+    </path>
+    <group>
+      <clip-path
+          android:pathData="M0,0h412v892h-412z"/>
+      <path
+          android:pathData="M78,-88.39L78,-88.39A117,117 0,0 1,195 28.61L195,148.2A117,117 0,0 1,78 265.2L78,265.2A117,117 0,0 1,-39 148.2L-39,28.61A117,117 0,0 1,78 -88.39z"
+          android:strokeAlpha="0.2"
+          android:fillColor="#9B8DC1"
+          android:fillAlpha="0.088"/>
+      <path
+          android:pathData="M353.5,530.39L353.5,530.39A136.5,136.5 0,0 1,490 666.89L490,835.89A136.5,136.5 0,0 1,353.5 972.39L353.5,972.39A136.5,136.5 0,0 1,217 835.89L217,666.89A136.5,136.5 0,0 1,353.5 530.39z"
+          android:strokeAlpha="0.2"
+          android:fillColor="#E8DEF9"
+          android:fillAlpha="0.106"/>
+    </group>
+  </group>
+</vector>

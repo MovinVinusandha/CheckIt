@@ -37,7 +37,7 @@ public class SplashActivity extends AppCompatActivity {
             );
         }
 
-        // Navigate after 3 seconds
+        // Navigate after 1 seconds
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -56,6 +56,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish(); // Close SplashActivity
             }
-        }, 3000); // 3000ms = 3 seconds
+        }, 1000); // 1000ms = 1 seconds
     }
 }
