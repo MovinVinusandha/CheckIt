@@ -180,8 +180,30 @@ public class AccountMenuActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
+                        // Switch failed (e.g., account deleted from Firebase Console)
                         String error = task.getException() != null ? task.getException().getMessage() : "Unknown error";
                         Toast.makeText(AccountMenuActivity.this, "Switch failed: " + error, Toast.LENGTH_LONG).show();
+
+                        // Remove the invalid account from the local list
+                        SharedPreferences allAccountsPrefs = getSharedPreferences("AllAccounts", MODE_PRIVATE);
+                        String json = allAccountsPrefs.getString("accounts_list", null);
+                        Type type = new TypeToken<ArrayList<SavedAccount>>() {}.getType();
+                        List<SavedAccount> savedAccounts = gson.fromJson(json, type);
+
+                        if (savedAccounts != null) {
+                            for (int i = 0; i < savedAccounts.size(); i++) {
+                                if (savedAccounts.get(i).getEmail().equalsIgnoreCase(account.getEmail())) {
+                                    savedAccounts.remove(i);
+                                    break;
+                                }
+                            }
+                            // Save updated list
+                            String updatedJson = gson.toJson(savedAccounts);
+                            allAccountsPrefs.edit().putString("accounts_list", updatedJson).apply();
+                            
+                            // Refresh UI immediately
+                            populateSavedAccounts();
+                        }
                     }
                 });
     }
