@@ -1,6 +1,12 @@
 # Gradle files and cache
 .gradle/
-build/
+/build/
+*/build/
+
+# Release and Debug output folders
+*/release/
+*/debug/
+*.dm
 
 # Local configuration file (SDK paths)
 local.properties
@@ -8,6 +14,7 @@ local.properties
 # Log/OS Files
 *.log
 .DS_Store
+Thumbs.db
 
 # Android Studio generated files and folders
 captures/
@@ -15,7 +22,12 @@ captures/
 .cxx/
 *.aab
 *.apk
+*.ap_             
 output-metadata.json
+
+# Compiled output 
+*.class
+*.dex
 
 # IntelliJ / Android Studio IDE files
 *.iml
@@ -23,10 +35,14 @@ output-metadata.json
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
+*.iws
+*.ipr
 
 # Keystore files (Production Signing Keys)
 *.jks
 *.keystore
+*.p12
+*.key
 
 # Android Profiling
 *.hprof
@@ -35,3 +51,4 @@ render.experimental.xml
 # Firebase & Secrets (Manually Added)
 # =========================================================================
 app/google-services.json
+crashlytics-build.properties
