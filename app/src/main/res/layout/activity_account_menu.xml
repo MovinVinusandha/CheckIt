@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:fitsSystemWindows="true"
     tools:context=".AccountMenuActivity">
 
     <!-- Top Handle and Close Icon -->
@@ -25,6 +26,7 @@
         android:layout_height="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:contentDescription="Close Menu"
         android:padding="4dp"
         android:src="@drawable/ic_close"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,6 +53,7 @@
                 android:id="@+id/iv_main_profile"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:contentDescription="User Profile"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_account_circle"
                 app:tint="@color/branding_purple" />
@@ -132,6 +135,7 @@
                     android:id="@+id/iv_switch_arrow"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="Toggle Accounts"
                     android:src="@drawable/ic_expand_more"
                     app:tint="#1D1B20" />
             </LinearLayout>
@@ -172,6 +176,7 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:contentDescription="Add Account"
                         android:padding="8dp"
                         android:src="@drawable/ic_add"
                         app:tint="#1D1B20" />
