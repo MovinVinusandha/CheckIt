@@ -3,20 +3,43 @@ package com.example.checkit;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountMenuActivity extends AppCompatActivity {
 
     private TextView tvGreeting, tvEmail;
+    private LinearLayout accountListContainer;
+    private View btnAddAccount;
+    private FirebaseAuth mAuth;
+    private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_menu);
+
+        mAuth = FirebaseAuth.getInstance();
+        gson = new Gson();
 
         // Hide action bar for full screen feel
         if (getSupportActionBar() != null) {
@@ -25,6 +48,8 @@ public class AccountMenuActivity extends AppCompatActivity {
 
         tvGreeting = findViewById(R.id.tv_greeting);
         tvEmail = findViewById(R.id.tv_email);
+        accountListContainer = findViewById(R.id.accountListContainer);
+        btnAddAccount = findViewById(R.id.btnAddAccount);
 
         ImageView ivClose = findViewById(R.id.iv_close);
         ivClose.setOnClickListener(new View.OnClickListener() {
@@ -43,6 +68,14 @@ public class AccountMenuActivity extends AppCompatActivity {
             }
         });
 
+        btnAddAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AccountMenuActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
         MaterialButton btnDevInfo = findViewById(R.id.btn_dev_info);
         btnDevInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +90,7 @@ public class AccountMenuActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadProfile();
+        populateSavedAccounts();
     }
 
     private void loadProfile() {
@@ -66,5 +100,65 @@ public class AccountMenuActivity extends AppCompatActivity {
 
         tvGreeting.setText("Hi, " + name + "!");
         tvEmail.setText(email);
+    }
+
+    private void populateSavedAccounts() {
+        accountListContainer.removeAllViews();
+        
+        SharedPreferences allAccountsPrefs = getSharedPreferences("AllAccounts", MODE_PRIVATE);
+        String json = allAccountsPrefs.getString("accounts_list", null);
+        Type type = new TypeToken<ArrayList<SavedAccount>>() {}.getType();
+        List<SavedAccount> savedAccounts = gson.fromJson(json, type);
+
+        if (savedAccounts != null) {
+            String currentUserEmail = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getEmail() : "";
+            
+            for (SavedAccount account : savedAccounts) {
+                // Inflate item layout
+                View itemView = LayoutInflater.from(this).inflate(R.layout.item_saved_account, accountListContainer, false);
+                
+                TextView tvName = itemView.findViewById(R.id.tv_account_name);
+                TextView tvEmail = itemView.findViewById(R.id.tv_account_email);
+                
+                tvName.setText(account.getName());
+                tvEmail.setText(account.getEmail());
+                
+                // If it's the current user, maybe style differently or skip
+                if (account.getEmail().equalsIgnoreCase(currentUserEmail)) {
+                    itemView.setEnabled(false);
+                    itemView.setAlpha(0.5f);
+                } else {
+                    itemView.setOnClickListener(v -> switchAccount(account));
+                }
+                
+                accountListContainer.addView(itemView);
+            }
+        }
+    }
+
+    private void switchAccount(SavedAccount account) {
+        mAuth.signInWithEmailAndPassword(account.getEmail(), account.getPassword())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Update UserProfile SharedPreferences for the new user
+                            SharedPreferences prefs = getSharedPreferences("UserProfile", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("email", account.getEmail());
+                            editor.putString("name", account.getName());
+                            editor.apply();
+
+                            Toast.makeText(AccountMenuActivity.this, "Switched to " + account.getName(), Toast.LENGTH_SHORT).show();
+                            
+                            Intent intent = new Intent(AccountMenuActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(AccountMenuActivity.this, "Switch failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 }
